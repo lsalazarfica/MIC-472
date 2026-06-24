@@ -2,13 +2,231 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>MIC 472</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIC 472 - Consulta de Calificaciones</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 30px;
+    background: #f3f4f6;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+h1 {
+    text-align: center;
+    color: #1f2933;
+    margin-bottom: 25px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 11px;
+    font-size: 16px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    background: #1f4e79;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #163a5d;
+}
+
+#nombre {
+    margin-top: 25px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #111827;
+}
+
+.grid {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 110px;
+    gap: 12px;
+    padding: 20px;
+    background: #f6f7f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.grid input {
+    width: 100%;
+    padding: 6px;
+    font-size: 15px;
+    text-align: center;
+    background: #eef0f3;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.final {
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 </head>
+
 <body>
+
+<div class="container">
 
 <h1>MIC 472 - Consulta de Calificaciones</h1>
 
-<p>Si ves este mensaje, GitHub Pages está funcionando correctamente.</p>
+<label for="rol">Ingrese su ROL USM:</label>
+<input id="rol" type="text" placeholder="Ej. 202004035">
+
+<button id="buscar">Consultar</button>
+
+<div id="resultados" style="display:none;">
+    <div id="nombre"></div>
+
+    <div class="grid">
+        <div>Trabajo en Clase 1 - Trueque de un secreto (PT1)</div>
+        <input id="pt1" readonly>
+
+        <div>Presentación Grupal 1 - Diagrama de Flujo (PG1)</div>
+        <input id="pg1" readonly>
+
+        <div>Presentación Grupal 2 - Herramienta Lean (PG2)</div>
+        <input id="pg2" readonly>
+
+        <div>Trabajo en Clase 2 - Last Planner System (PT2)</div>
+        <input id="pt2" readonly>
+
+        <div>Presentación Grupal 3 - Diagnóstico de Pérdidas (PG3)</div>
+        <input id="pg3" readonly>
+
+        <div>Trabajo en Clase 3 - Reporte A3 (PT3)</div>
+        <input id="pt3" readonly>
+
+        <div>Presentación Grupal 4 - Estrategias de Implementación Lean (PG4)</div>
+        <input id="pg4" readonly>
+
+        <div>Promedio Presentaciones y Trabajos en Clases (50%) (X PT)</div>
+        <input id="xpt" readonly>
+
+        <div>Tarea 1 - Tablero Kanban Individual (TA1)</div>
+        <input id="ta1" readonly>
+
+        <div>Tarea 2 - VSM (TA2)</div>
+        <input id="ta2" readonly>
+
+        <div>Tarea 3 - 5S Individual (TA3)</div>
+        <input id="ta3" readonly>
+
+        <div>Tarea 4 - Investigación coeficiente 2 (TA4)</div>
+        <input id="ta4" readonly>
+
+        <div>Tarea 4 - Investigación coeficiente 2 (TA5)</div>
+        <input id="ta5" readonly>
+
+        <div>Promedio Tareas (15%) (X TA)</div>
+        <input id="xta" readonly>
+
+        <div>Proyecto Final (35%) (PF)</div>
+        <input id="pf" readonly>
+
+        <div>Participación en simulación con Sophia (Puntos extra)</div>
+        <input id="extra" readonly>
+
+        <div class="final">Nota Final</div>
+        <input id="nf" class="final" readonly>
+    </div>
+</div>
+
+</div>
+
+<script>
+const apiUrl = "https://script.google.com/macros/s/AKfycby6n-QkhK2Lkb4Yh0p8jtxgKkvi8hQG9n9S7dJVFTu4KjjsYncdUVIFUTTaSphmqbaE/exec";
+
+document.getElementById("buscar").addEventListener("click", () => {
+    const rol = document.getElementById("rol").value.trim();
+
+    if (!rol) {
+        alert("Ingrese un ROL válido");
+        return;
+    }
+
+    fetch(apiUrl + "?rol=" + encodeURIComponent(rol))
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            document.getElementById("nombre").textContent = data["Nombre"] || "";
+
+            document.getElementById("pt1").value = data["PT1"] ?? "";
+            document.getElementById("pg1").value = data["PG1"] ?? "";
+            document.getElementById("pg2").value = data["PG2"] ?? "";
+            document.getElementById("pt2").value = data["PT2"] ?? "";
+            document.getElementById("pg3").value = data["PG3"] ?? "";
+            document.getElementById("pt3").value = data["PT3"] ?? "";
+            document.getElementById("pg4").value = data["PG4"] ?? "";
+            document.getElementById("xpt").value = data["X PT"] ?? "";
+
+            document.getElementById("ta1").value = data["TA1"] ?? "";
+            document.getElementById("ta2").value = data["TA2"] ?? "";
+            document.getElementById("ta3").value = data["TA3"] ?? "";
+            document.getElementById("ta4").value = data["TA4"] ?? "";
+            document.getElementById("ta5").value = data["TA5"] ?? "";
+            document.getElementById("xta").value = data["X TA"] ?? "";
+
+            document.getElementById("pf").value = data["PF"] ?? "";
+            document.getElementById("extra").value = data["Puntos extra"] ?? "";
+            document.getElementById("nf").value = data["NOTA FINAL"] ?? "";
+
+            document.getElementById("resultados").style.display = "block";
+        })
+        .catch(() => {
+            alert("Error al conectar con el servidor");
+        });
+});
+</script>
 
 </body>
 </html>
